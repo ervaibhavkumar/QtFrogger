@@ -25,6 +25,8 @@ QtApplication {
         "game.h",
         "images.qrc",
         "main.cpp",
+        "obstacle.cpp",
+        "obstacle.h",
     ]
 
     Depends { name: "Qt"; submodules: [ "core", "gui", "multimedia", "widgets" ] }
