@@ -14,8 +14,14 @@ Obstacle::Obstacle(QString obstacle, QSize size, int speed, int interval, QPoint
 
 void Obstacle::createObstacle() {
     if (obstacleType == "TRUCK") {
-        QPixmap pixmap(":/images/test.png");
-        setPixmap(pixmap.scaled(obstacleSize, Qt::KeepAspectRatio));
+        QPixmap *pixmap;
+        if (obstacleSpeed < 0) {
+            pixmap = new QPixmap(":/images/truck_right.png");
+        }
+        else {
+            pixmap = new QPixmap(":/images/truck_left.png");
+        }
+        setPixmap(pixmap->scaled(obstacleSize));
     }
     else {
         Q_ASSERT(obstacleType == "BOAT");
@@ -26,7 +32,7 @@ void Obstacle::createObstacle() {
         else {
             pixmap = new QPixmap(":/images/boat_left.png");
         }
-        setPixmap(pixmap->scaled(obstacleSize, Qt::KeepAspectRatio));
+        setPixmap(pixmap->scaled(obstacleSize));
     }
     setupTimer();
 }

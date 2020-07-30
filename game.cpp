@@ -53,26 +53,50 @@ void Game::createBanners() {
     // Small size Boats
     QSize *smallObstacles = new QSize(70,bannerHeight);
     createObstacles(3, "BOAT", *smallObstacles, 32, \
-                    100, screenSize.width(), bannerHeight, QPoint(screenSize.width(), bannerHeight), \
+                    100, screenSize.width() - 700, bannerHeight, QPoint(screenSize.width(), bannerHeight), \
                     QPoint(0, bannerHeight), 200);
 
     // Large Boats
     QSize *largeObstacles = new QSize(210,bannerHeight);
     createObstacles(2, "BOAT", *largeObstacles, -40, \
-                    100, 0, 2 * bannerHeight, QPoint(screenSize.width(), 2 * bannerHeight), \
+                    100, 0 + 300, 2 * bannerHeight, QPoint(screenSize.width(), 2 * bannerHeight), \
                     QPoint(0, 2 * bannerHeight), -400);
 
     // Small size slow Boats
     QSize *smallSlowObstacles = new QSize(70,bannerHeight);
     createObstacles(4, "BOAT", *smallSlowObstacles, 25, \
-                    100, screenSize.width(), 3 * bannerHeight, QPoint(screenSize.width(), 3 * bannerHeight), \
+                    100, screenSize.width() - 250, 3 * bannerHeight, QPoint(screenSize.width(), 3 * bannerHeight), \
                     QPoint(0, 3 * bannerHeight), 250);
 
     // Medium Boats
-    QSize *mediumObstacles = new QSize(90,bannerHeight);
+    QSize *mediumObstacles = new QSize(110,bannerHeight);
     createObstacles(3, "BOAT", *mediumObstacles, -30, \
                     100, 0,  4 * bannerHeight, QPoint(screenSize.width(), 4 * bannerHeight), \
                     QPoint(0, 4 * bannerHeight), -315);
+
+    // Small size Trucks
+    QSize *smallTrucks = new QSize(140,bannerHeight);
+    createObstacles(3, "TRUCK", *smallTrucks, 32, \
+                    100, screenSize.width() - 300, 6 * bannerHeight, QPoint(screenSize.width(), 6 * bannerHeight), \
+                    QPoint(0, 6 * bannerHeight), 200);
+
+    // Large Trucks
+    QSize *largeTrucks = new QSize(210,bannerHeight);
+    createObstacles(2, "TRUCK", *largeTrucks, -40, \
+                    100, 0, 7 * bannerHeight, QPoint(screenSize.width(), 7 * bannerHeight), \
+                    QPoint(0, 7 * bannerHeight), -400);
+
+    // Small size slow Trucks
+    QSize *smallSlowTrucks = new QSize(140,bannerHeight);
+    createObstacles(4, "TRUCK", *smallSlowTrucks, 25, \
+                    100, screenSize.width() - 900, 8 * bannerHeight, QPoint(screenSize.width(), 8 * bannerHeight), \
+                    QPoint(0, 8 * bannerHeight), 250);
+
+    // Medium Trucks
+    QSize *mediumTrucks = new QSize(120,bannerHeight);
+    createObstacles(3, "TRUCK", *mediumTrucks, -30, \
+                    100, 0 + 600,  9 * bannerHeight, QPoint(screenSize.width(), 9 * bannerHeight), \
+                    QPoint(0, 9 * bannerHeight), -315);
 }
 
 void Game::createObstacles(int numObstacles, QString obstacleType, QSize obstacleSize, \
