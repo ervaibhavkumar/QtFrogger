@@ -27,6 +27,8 @@ QtApplication {
         "main.cpp",
         "obstacle.cpp",
         "obstacle.h",
+        "player.cpp",
+        "player.h",
     ]
 
     Depends { name: "Qt"; submodules: [ "core", "gui", "multimedia", "widgets" ] }

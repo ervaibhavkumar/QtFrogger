@@ -1,6 +1,7 @@
 #include "game.h"
 #include "banner.h"
 #include "obstacle.h"
+#include "player.h"
 #include "config.h"
 
 #include <QGraphicsScene>
@@ -20,35 +21,15 @@ Game::Game(QSize sizeoFScreen, QGraphicsView *parent)
 }
 
 void Game::Start() {
+    scene()->clear();
     createBanners();
-    createLanes();
+    createLanesAndObstacles();
     return;
 }
 
-void Game::createLanes() {
-//    int height = screenSize.height();
-//    int width = screenSize.width();
-//    Banner *start = new Banner(QPixmap(":/images/start.png"), QSize(width, height / 18));
-//    start->setPos(0, 80);
-//    start->setFocus();
-//    scene()->addItem(start);
-}
-
-void Game::createBanners() {
+void Game::createLanesAndObstacles() {
     int bannerHeight = screenSize.height() / numLanes;
     int bannerWidth = screenSize.width();
-
-    Banner *finish = new Banner(QPixmap(":/images/finish.png"), QSize(bannerWidth, bannerHeight));
-    finish->setPos((screenSize.width() - finish->getPixmapwidth()) / 2, 0);
-    scene()->addItem(finish);
-
-    Banner *pause = new Banner(QPixmap(":/images/pause.png"), QSize(bannerWidth, bannerHeight));
-    pause->setPos((screenSize.width() - pause->getPixmapwidth()) / 2, 5 * bannerHeight);
-    scene()->addItem(pause);
-
-    Banner *start = new Banner(QPixmap(":/images/start.png"), QSize(bannerWidth, bannerHeight));
-    start->setPos((screenSize.width() - start->getPixmapwidth()) / 2, 10 * bannerHeight);
-    scene()->addItem(start);
 
     // Small size Boats
     QSize *smallObstacles = new QSize(70,bannerHeight);
@@ -97,6 +78,33 @@ void Game::createBanners() {
     createObstacles(3, "TRUCK", *mediumTrucks, -30, \
                     100, 0 + 600,  9 * bannerHeight, QPoint(screenSize.width(), 9 * bannerHeight), \
                     QPoint(0, 9 * bannerHeight), -315);
+
+}
+
+void Game::createBanners() {
+    int bannerHeight = screenSize.height() / numLanes;
+    int bannerWidth = screenSize.width();
+
+    Banner *finish = new Banner(QPixmap(":/images/finish.png"), QSize(bannerWidth, bannerHeight));
+    finish->setPos((screenSize.width() - finish->getPixmapwidth()) / 2, 0);
+    scene()->addItem(finish);
+
+    Banner *pause = new Banner(QPixmap(":/images/pause.png"), QSize(bannerWidth, bannerHeight));
+    pause->setPos((screenSize.width() - pause->getPixmapwidth()) / 2, 5 * bannerHeight);
+    scene()->addItem(pause);
+
+    Banner *start = new Banner(QPixmap(":/images/start.png"), QSize(bannerWidth, bannerHeight));
+    start->setPos((screenSize.width() - start->getPixmapwidth()) / 2, 10 * bannerHeight);
+    scene()->addItem(start);
+
+    createPlayer((screenSize.width() - start->getPixmapwidth()) / 2 - 140, 10 * bannerHeight, 100, bannerHeight);
+}
+
+void Game::createPlayer(int startX, int startY, int moveX, int moveY) {
+    player = new Player(playerSize, QPoint(-moveX + 55,-moveY + 50), \
+                        QPoint(screenSize.width() + moveX - 55, screenSize.height() + moveY - 50), moveX, moveY);
+    player->setPos(startX, startY);
+    scene()->addItem(player);
 }
 
 void Game::createObstacles(int numObstacles, QString obstacleType, QSize obstacleSize, \
@@ -106,5 +114,28 @@ void Game::createObstacles(int numObstacles, QString obstacleType, QSize obstacl
         Obstacle *boat = new Obstacle(obstacleType, obstacleSize, obstacleSpeed, startTime, endPoint, startPoint);
         boat->setPos(startX - ((i + 1) * difference), startY);
         scene()->addItem(boat);
+    }
+}
+
+void Game::keyPressEvent(QKeyEvent *event) {
+    if (player == nullptr) return;
+
+    switch (event->key()) {
+        case Qt::Key_Up : {
+            player->moveUp();
+            break;
+        }
+        case Qt::Key_Down: {
+            player->moveDown();
+            break;
+        }
+        case Qt::Key_Left: {
+            player->moveLeft();
+            break;
+        }
+        case Qt::Key_Right: {
+            player->moveRight();
+            break;
+        }
     }
 }
