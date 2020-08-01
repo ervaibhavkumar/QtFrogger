@@ -4,11 +4,14 @@
         <file>images/finish.png</file>
         <file>images/pause.png</file>
         <file>images/start.png</file>
-        <file>images/test.png</file>
         <file>images/boat_left.png</file>
         <file>images/boat_right.png</file>
         <file>images/truck_left.png</file>
         <file>images/truck_right.png</file>
         <file>images/player.png</file>
+        <file>images/ocean.jpg</file>
+        <file>images/road.png</file>
+        <file>images/raceBg.png</file>
+        <file>images/pauseBg.jpeg</file>
     </qresource>
 </RCC>

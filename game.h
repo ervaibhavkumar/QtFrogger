@@ -18,6 +18,7 @@ protected:
 
 private:
     void createLanesAndObstacles();
+    void createBackground(int numLanes, QString mapPath, QPoint startPoint, QSize size);
     void createBanners();
     void createPlayer(int startX, int startY, int moveX, int moveY);
     void createObstacles(int numObstacles, QString obstacleType, QSize obstacleSize, \

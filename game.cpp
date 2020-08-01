@@ -17,8 +17,7 @@ Game::Game(QSize sizeoFScreen, QGraphicsView *parent)
     scene->setSceneRect(0,0,screenSize.width(),screenSize.height());
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setWindowTitle("QT Frogger");
-}
+    setWindowTitle("QT Frogger");}
 
 void Game::Start() {
     scene()->clear();
@@ -30,6 +29,9 @@ void Game::Start() {
 void Game::createLanesAndObstacles() {
     int bannerHeight = screenSize.height() / numLanes;
     int bannerWidth = screenSize.width();
+
+    // create ocean background
+    createBackground(1, ":/images/ocean.jpg", QPoint(0, bannerHeight), QSize(screenSize.width(), 4 * bannerHeight));
 
     // Small size Boats
     QSize *smallObstacles = new QSize(70,bannerHeight);
@@ -54,6 +56,9 @@ void Game::createLanesAndObstacles() {
     createObstacles(3, "BOAT", *mediumObstacles, -30, \
                     100, 0,  4 * bannerHeight, QPoint(screenSize.width(), 4 * bannerHeight), \
                     QPoint(0, 4 * bannerHeight), -315);
+
+    // create road background
+    createBackground(4, ":/images/road.png", QPoint(0, 6 * bannerHeight), QSize(screenSize.width(), bannerHeight));
 
     // Small size Trucks
     QSize *smallTrucks = new QSize(140,bannerHeight);
@@ -85,13 +90,25 @@ void Game::createBanners() {
     int bannerHeight = screenSize.height() / numLanes;
     int bannerWidth = screenSize.width();
 
+    // create finish background
+    createBackground(1, ":/images/raceBg.png", QPoint(0, 0), QSize(screenSize.width(), bannerHeight));
+
     Banner *finish = new Banner(QPixmap(":/images/finish.png"), QSize(bannerWidth, bannerHeight));
     finish->setPos((screenSize.width() - finish->getPixmapwidth()) / 2, 0);
     scene()->addItem(finish);
 
+    // create pause background
+    createBackground(1, ":/images/pauseBg.jpeg", QPoint(0, 5 * bannerHeight), \
+                     QSize(screenSize.width(), bannerHeight));
+
     Banner *pause = new Banner(QPixmap(":/images/pause.png"), QSize(bannerWidth, bannerHeight));
     pause->setPos((screenSize.width() - pause->getPixmapwidth()) / 2, 5 * bannerHeight);
     scene()->addItem(pause);
+
+    // create start background
+    int remainingScreenHeight = screenSize.height() - (bannerHeight * numLanes) ;
+    createBackground(1, ":/images/raceBg.png", QPoint(0, 10 * bannerHeight), \
+                     QSize(screenSize.width(), bannerHeight + remainingScreenHeight));
 
     Banner *start = new Banner(QPixmap(":/images/start.png"), QSize(bannerWidth, bannerHeight));
     start->setPos((screenSize.width() - start->getPixmapwidth()) / 2, 10 * bannerHeight);
@@ -104,6 +121,7 @@ void Game::createPlayer(int startX, int startY, int moveX, int moveY) {
     player = new Player(playerSize, QPoint(-moveX + 55,-moveY + 50), \
                         QPoint(screenSize.width() + moveX - 55, screenSize.height() + moveY - 50), moveX, moveY);
     player->setPos(startX, startY);
+    player->setZValue(1);
     scene()->addItem(player);
 }
 
@@ -137,5 +155,13 @@ void Game::keyPressEvent(QKeyEvent *event) {
             player->moveRight();
             break;
         }
+    }
+}
+
+void Game::createBackground(int numLanes, QString mapPath, QPoint startPoint, QSize size) {
+    for (auto i = 0; i< numLanes; i ++) {
+        Banner *bg = new Banner(QPixmap(mapPath), size, Qt::IgnoreAspectRatio);
+        bg->setPos(startPoint.x(), startPoint.y() + (i * size.height()));
+        scene()->addItem(bg);
     }
 }

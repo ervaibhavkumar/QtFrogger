@@ -6,7 +6,8 @@
 class Banner: public QGraphicsPixmapItem
 {
 public:
-    Banner(QPixmap pixmap, QSize size, QGraphicsItem *parent = nullptr);
+    Banner(QPixmap pixmap, QSize size, \
+           Qt::AspectRatioMode aspectRatio = Qt::KeepAspectRatio, QGraphicsItem *parent = nullptr);
     int getPixmapwidth();
 
 private:
@@ -14,6 +15,7 @@ private:
 
     QPixmap label;
     QSize bannerSize;
+    Qt::AspectRatioMode bannerAspectRatio;
 };
 
 #endif // BANNER_H
