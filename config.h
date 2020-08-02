@@ -4,5 +4,5 @@
 #include <QApplication>
 
 const int numLanes = 11;
-const QSize playerSize(115,100);
+const QSize playerSize(115,90);
 #endif // CONFIG_H

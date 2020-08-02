@@ -13,5 +13,7 @@
         <file>images/road.png</file>
         <file>images/raceBg.png</file>
         <file>images/pauseBg.jpeg</file>
+        <file>audio/success.mp3</file>
+        <file>audio/die.mp3</file>
     </qresource>
 </RCC>

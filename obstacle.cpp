@@ -1,6 +1,12 @@
 #include "obstacle.h"
+#include "player.h"
+#include "audio.h"
+#include "appdialog.h"
 
-Obstacle::Obstacle(QString obstacle, QSize size, int speed, int interval, QPoint point, QPoint minPoint, QGraphicsItem *parent)
+#include <QDebug>
+
+Obstacle::Obstacle(QString obstacle, QSize size, int speed, int interval, \
+                   QPoint point, QPoint minPoint, QGraphicsItem *parent)
     : QGraphicsPixmapItem(parent),
       obstacleType(obstacle),
       obstacleSize(size),
@@ -39,12 +45,36 @@ void Obstacle::createObstacle() {
 
 void Obstacle::updatePos() {
     setPos(x() - obstacleSpeed, y());
-    if (x() < -15) setPos(maxCoordinates.x(), maxCoordinates.y());
-    else if (x() > maxCoordinates.x() + 15) setPos(minCoordinates.x(), minCoordinates.y());
+    checkCollisonWithPlayer();
+    if (x() < -15) {
+        setPos(maxCoordinates.x(), maxCoordinates.y());
+    }
+    else if (x() > maxCoordinates.x() + 15) {
+        setPos(minCoordinates.x(), minCoordinates.y());
+    }
 }
+
 
 void Obstacle::setupTimer() {
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updatePos()));
     timer->start(timerInterval);
+}
+
+void Obstacle::checkCollisonWithPlayer() {
+    if (obstacleType != "BOAT") {
+        for (auto const item : collidingItems()) {
+            Player* player = dynamic_cast<Player*>(item);
+            if (player != nullptr) {
+                player->resetPlayer();
+                Audio::playSound("die");
+                if (AppDialog::informationPopup("You died.", "No....", "Quit") == QMessageBox::Ok)
+                    QCoreApplication::quit();
+            }
+        }
+    }
+}
+
+int Obstacle::getObstacleSpeed() {
+    return  obstacleSpeed;
 }

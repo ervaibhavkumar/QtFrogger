@@ -18,6 +18,10 @@ QtApplication {
 
     consoleApplication: true
     files: [
+        "appdialog.cpp",
+        "appdialog.h",
+        "audio.cpp",
+        "audio.h",
         "banner.cpp",
         "banner.h",
         "config.h",

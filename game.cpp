@@ -3,6 +3,8 @@
 #include "obstacle.h"
 #include "player.h"
 #include "config.h"
+#include "audio.h"
+#include "appdialog.h"
 
 #include <QGraphicsScene>
 #include <QDebug>
@@ -114,15 +116,26 @@ void Game::createBanners() {
     start->setPos((screenSize.width() - start->getPixmapwidth()) / 2, 10 * bannerHeight);
     scene()->addItem(start);
 
-    createPlayer((screenSize.width() - start->getPixmapwidth()) / 2 - 140, 10 * bannerHeight, 100, bannerHeight);
+    createPlayer(QPoint((screenSize.width() - start->getPixmapwidth()) / 2 - 140, 10 * bannerHeight), \
+                 100, bannerHeight);
 }
 
-void Game::createPlayer(int startX, int startY, int moveX, int moveY) {
-    player = new Player(playerSize, QPoint(-moveX + 55,-moveY + 50), \
-                        QPoint(screenSize.width() + moveX - 55, screenSize.height() + moveY - 50), moveX, moveY);
-    player->setPos(startX, startY);
+void Game::createPlayer(QPoint startPoint, int moveX, int moveY) {
+    player = new Player(playerSize, startPoint, QPoint(-moveX + 55,-moveY + 50), \
+                        QPoint(screenSize.width() + moveX - 55, screenSize.height() + moveY - 50), \
+                        moveX, moveY, numLanes);
     player->setZValue(1);
     scene()->addItem(player);
+
+    playerTimer = new QTimer(this);
+    connect(playerTimer, SIGNAL(timeout()), this, SLOT(updatePos()));
+//    playerTimer->start(100);
+//    playerTimer->stop();
+}
+
+void Game::updatePos() {
+    player->updatePos();
+    qDebug() << player->getPlayerSpeed();
 }
 
 void Game::createObstacles(int numObstacles, QString obstacleType, QSize obstacleSize, \
@@ -135,27 +148,91 @@ void Game::createObstacles(int numObstacles, QString obstacleType, QSize obstacl
     }
 }
 
+void Game::raiseQuestionPopup(QString message, QString title) {
+    if (AppDialog::questionPopup(message, title, "Restart Game", "Quit Game") == QMessageBox::Yes) {
+        Start();
+    }
+    else {
+        QApplication::quit();
+    }
+}
+
 void Game::keyPressEvent(QKeyEvent *event) {
     if (player == nullptr) return;
 
     switch (event->key()) {
         case Qt::Key_Up : {
             player->moveUp();
+            collisonCheck();
             break;
         }
         case Qt::Key_Down: {
             player->moveDown();
+            collisonCheck();
             break;
         }
         case Qt::Key_Left: {
             player->moveLeft();
+            collisonCheck();
             break;
         }
         case Qt::Key_Right: {
             player->moveRight();
+            collisonCheck();
             break;
         }
     }
+}
+
+void Game::collisonCheck() {
+    playerTimer->stop();
+    int playerCurrentLane = player->getCurrentLane();
+    // skip the "Start" and "Pause" lane
+    if (!isStartOrPauseLane(playerCurrentLane)) {
+        if (playerCurrentLane == numLanes) {
+            // player won
+            playerTimer->stop();
+            Audio::playSound("success");
+            raiseQuestionPopup("YOU WON", "Hurayyy...");
+        }
+        else {
+            if (playerCurrentLane >=2 && playerCurrentLane <= 5) {
+                // road lanes
+                for (auto const item : player->collidingItems()) {
+                    Obstacle* truck = dynamic_cast<Obstacle*>(item);
+                    if (truck != nullptr) {
+                        playerTimer->stop();
+                        Audio::playSound("die");
+                        if (AppDialog::informationPopup("You died.", "No....", "Quit") == QMessageBox::Ok)
+                            QCoreApplication::quit();
+                    }
+                }
+            }
+            else if (playerCurrentLane >= 7 && playerCurrentLane <= 10) {
+                // ocean lanes
+                QList<QGraphicsItem*> collison = player->collidingItems();
+                for(int k = 0; k < (collison.size()/2); k++) collison.swap(k,collison.size()-(1+k));
+                for (auto const item : collison) {
+                    Obstacle* boat = dynamic_cast<Obstacle*>(item);
+                    if (boat != nullptr) {
+                        // move player with boat
+                        player->setPlayerSpeed(boat->getObstacleSpeed());
+                        playerTimer->start(100);
+                        return;
+                    }
+                }
+                // not landed on boat
+                playerTimer->stop();
+                Audio::playSound("die");
+                if (AppDialog::informationPopup("You died.", "No....", "Quit") == QMessageBox::Ok)
+                    QCoreApplication::quit();
+            }
+        }
+    }
+}
+
+bool Game::isStartOrPauseLane(int currentLane) {
+    return (currentLane == 1 || currentLane == 6);
 }
 
 void Game::createBackground(int numLanes, QString mapPath, QPoint startPoint, QSize size) {
