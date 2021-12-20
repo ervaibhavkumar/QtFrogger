@@ -9,3 +9,5 @@ This is a game application made using Qt/C++ in which frog has to go from "Start
 5. Reach the "Finish" lane to win.
 
 Enjoy :smiley: :boom:
+
+![Demo](Frogger.gif)
